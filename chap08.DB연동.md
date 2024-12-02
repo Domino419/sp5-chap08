@@ -13,8 +13,7 @@
 프로젝트 준비 
  - pom파일에 DB설정 추가 
  - src\main\java\spring 에 사용할 소스 파일 복붙
- - git 생성 
-
-sp5-chap08 
-
-chap.08 DB연동 -str
+ - git 생성 및 연동 
+ - MySQL 테이블 생성 
+ - AppCtx에 dataSource 설정  
+ - 

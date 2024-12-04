@@ -13,3 +13,4 @@
 git commit -m  "MainForAssembler.java 까지 작업 완료"
 git commit -m  " Chapter7. AOP 프로그래밍 - end"
 git commit -m  " Chapter8. DB연동 - 4.2 jdbcTemplate를 이용한 조회 쿼리 실행 ing "
+git commit -m  " Chapter8. DB연동 - MainForMemberDao Run 정상, DB연동 확인 완료 !  "

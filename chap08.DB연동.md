@@ -50,8 +50,42 @@ return count ;
 정의되지 않은 메서드 호출로 인한 컴파일 에러 
 리턴값을 count 변수로 제대로 줬어야 하는데 count()로 오타를 내버림.
 
+4.4 jdbcTemplate를 이용한 변경 쿼리 실행 
+INSERT, UPDATE, DELETE 쿼리는 update() 메서드를 사용한다. 
+int update(String sql) 
+int update(String sql, Object ... args )  
+
+4.5 PreparedStatementCreator 를 이용한 쿼리 실행 
+ 쿼리에서 사용할 값을 인자로 전달하는 방법 말고 
+ set 메서드를 사용해서 직접 인덱스 파라미터의 값을 설정해야 하는 경우에 사용,
+ PreparedStatementCreator를 인자로 받는 메서드를 이용해서 직접 PreparedStatementCreator 을 생성하고 설정할 수 있다. 
 
 
+4.6 . insert 쿼리 실행시 keyHolder를 이용해서 자동 생성 키값 구하기.
+MySql의 AUTO_INCREMENT 칼럼은 행이 추가되면 자동으로 값이 할당되는 컬럼으로 주요키 칼럼에 사용된다.
+그냥 insert 하게 되면 자동 증가 칼럼에 해당하는 값은 지정하지 않게 됨.
+쿼리 실행 후에 생성된 키값을 알고 싶다면  ketHolder를 사용한다. 
 
 
+빌드 실패 : Caused by: com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: Communications link failure
+SSLHandshakeException: Received fatal alert: protocol_version
+>> SSL핸드쉐이크 사용하지 않음으로 AppCtx에서 설정 변경 
+>> POM파일에서 MySql 버전 최신 버전 8.0.25로 변경 
+>> Db접속 유저 권한?부분에 설정 변경 처리 
+>> SELECT user, host, plugin FROM mysql.user WHERE user = 'spring5';
+>> ALTER USER 'spring5'@'localhost' IDENTIFIED WITH mysql_native_password BY 'spring5';
+>> 그래도 안되길래 보니까.. getString을 getNstring으로 오타내서 빌드 실패 ^^....
+
+>>.BadSqlGrammarException  PreparedStatementCallback; bad SQL grammar []; nested exception is java.sql.SQLSyntaxErrorException: Unknown column 'MAIL' in 'field list'
+>     "INSERT INTO Member(EMAIL, PASSWORD, NAME, REGDATE) VALUES (?, ?, ?, ?)", >> Email을 mail로 잘못 써서 수정함. 
+> 
+
+DB연동시 봤던 에러 메시지와 수습한 기록들.. 
+1. JDBC 연결 실패 - MySQL 버전을 8 버전으로 설치했더니 인증 방식이 틀려서 실패 . USER 'spring5'@'localhost' IDENTIFIED WITH mysql_native_password BY 'spring5'; 
+권한 설정을 다시 하고 나서 연결 성공 
+2. 빌드 중에 캐릭터셋이 안 맞다고 에러 발생,  에러로그에서 Can not call getNString() 메시지 확인 후 코드 확인하니까 getString이 아니라 getNString으로 오타냈음.
+3. BadSqlGrammarException  PreparedStatementCallback; bad SQL grammar []; nested exception is java.sql.SQLSyntaxErrorException: Unknown column 'MAIL' in 'field list'
+   에러 로그에서 email을 mail로 오타낸 부분이 확인되어서 해당 부분 수정함.
+4. SSL핸드쉐이크 ~ 관련 에러 메시지 발생시 데이터소스의 Db Url 에서 ssl 사용하지 않음으로 주소에 추가 기재해서 넘어감. useSSL=false&requireSSL=false
+5. (DB 버전 , 사용자 유저 권한, 컬럼명이나 getString 오타 부분 체크할 것 )
 

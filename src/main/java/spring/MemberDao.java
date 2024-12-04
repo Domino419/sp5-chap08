@@ -1,14 +1,15 @@
 package spring;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
 /**
  * class         : MemberDao
@@ -61,11 +62,65 @@ public class MemberDao {
 
     }
 
-    public void insert(Member member){
+
+    /**
+     * method        : insert
+     * date          : 24-12-04
+     * param         : Member member - 데이터베이스에 삽입할 회원 객체 (이메일, 비밀번호, 이름, 등록일시 정보 포함)
+     * return        : void
+     * description   : 새로운 회원 정보를 MEMBER 테이블에 삽입. 자동 생성된 키(ID)를 가져와서 Member 객체에 설정.
+     *                  PreparedStatementCreator를 사용하여 SQL INSERT 쿼리를 실행하고, KeyHolder로 생성된 ID 값을 반환.
+     */
+    public void insert(final Member member) {
+        KeyHolder keyHolder = new GeneratedKeyHolder();  // 자동 생성된 키 값을 받을 KeyHolder 객체 생성
+
+        // jdbcTemplate의 update 메서드를 사용하여 데이터 삽입 처리
+        jdbcTemplate.update(new PreparedStatementCreator() {
+            @Override
+            public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+                // 회원 데이터를 삽입할 SQL 쿼리 작성
+                PreparedStatement pstmt = con.prepareStatement(
+                        "INSERT INTO Member(EMAIL, PASSWORD, NAME, REGDATE) VALUES (?, ?, ?, ?)",
+                        new String[] {"ID"} // 자동 생성된 ID 값을 반환받기 위해 "ID" 컬럼을 지정
+                );
+
+                // PreparedStatement에 회원 정보 세팅
+                pstmt.setString(1, member.getEmail());
+                pstmt.setString(2, member.getPassword());
+                pstmt.setString(3, member.getName());
+                pstmt.setTimestamp(4, Timestamp.valueOf(member.getRegisterDateTime()));
+
+                return pstmt; // 생성한 PreparedStatement 반환
+            }
+        }, keyHolder); // PreparedStatement 실행 후 자동 생성된 키 값을 keyHolder에 저장
+
+        // 자동 생성된 키 값(ID)을 Member 객체에 설정
+        Number keyValue = keyHolder.getKey();
+        member.setId(keyValue.longValue());  // Long 타입으로 변환하여 회원 객체에 설정
     }
 
+
+
+    /**
+     * method        : update
+     * date          : 24-12-04
+     * param         : Member member - 업데이트할 회원 객체 (이름, 비밀번호, 이메일 정보를 포함)
+     * return        : void
+     * description   : MEMBER 테이블에서 이메일을 기준으로 해당 회원의 이름과 비밀번호를 업데이트.
+     *                  SQL 쿼리를 사용하여 UPDATE 문을 실행하며, JdbcTemplate의 update 메서드를 통해 처리.
+     *  hostiry      : 198pagem update method 추가 ,
+     *                  INSERT, UPDATE, DELETE 쿼리는 update() 메서드를 사용한다.
+     *                  int update(String sql)
+     *                  int update(String sql, Object ... args )
+     *                  Update() 메서드는 쿼리 실행 결과로 변경된 행의 갯수를 리턴한다.
+     */
     public void update(Member member){
+        jdbcTemplate.update(
+                "UPDATE MEMBER SET NAME = ? , PASSWORD = ? where EMAIL = ?" ,
+                member.getName(), member.getPassword() , member.getEmail() ) ;
     }
+
+
 
     /**
      * method        : selectAll
@@ -82,7 +137,7 @@ public class MemberDao {
                     @Override
                     public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
                         Member member = new Member(
-                                rs.getNString("EMAIL"),
+                                rs.getString("EMAIL"),
                                 rs.getString("PASSWORD"),
                                 rs.getString("NAME"),
                                 rs.getTimestamp("REGDATE").toLocalDateTime());

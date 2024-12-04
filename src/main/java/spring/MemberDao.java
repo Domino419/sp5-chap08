@@ -67,8 +67,47 @@ public class MemberDao {
     public void update(Member member){
     }
 
+    /**
+     * method        : selectAll
+     * date          : 24-12-04
+     * param         : 없음
+     * return        : List<Member> - 데이터베이스의 모든 회원 정보를 포함하는 리스트
+     * description   : 데이터베이스의 MEMBER 테이블에서 모든 회원 데이터를 조회.
+     *                  각 행은 Member 객체로 매핑되며, 결과는 리스트 형태로 반환됨.
+     *                  SQL 쿼리를 사용하여 전체 데이터 조회 수행.
+     * history       : 195page selectAll 메서드 추가
+     */
+    public List<Member> selectAll() {
+        List<Member> results = jdbcTemplate.query("select * from MEMBER", new RowMapper<Member>() {
+                    @Override
+                    public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        Member member = new Member(
+                                rs.getNString("EMAIL"),
+                                rs.getString("PASSWORD"),
+                                rs.getString("NAME"),
+                                rs.getTimestamp("REGDATE").toLocalDateTime());
+                        member.setId(rs.getLong("ID"));
+                    return member ;
+                    }
+                });
+        return results ;
+    }
 
 
+    /**
+     * method        : count
+     * date          : 24-12-04
+     * param         : 없음
+     * return        : int - MEMBER 테이블의 전체 레코드 수
+     * description   : 데이터베이스의 MEMBER 테이블에서 전체 회원 수를 조회.
+     *                  SQL 쿼리 `select count(*) from Member`를 실행하여 결과를 정수로 반환.
+     *                >> queryForObject() 메서드는 쿼리 실행 결과 행이 한개인 경우에 사용할 수 있는 메서드.
+     *                >> queryForObject() 메서드의 두번째 파라미터는 칼럼을 읽어올 때 사용할 타입을 지정한다.
+     */
+    public int count() {
+        Integer count = jdbcTemplate.queryForObject("select count(*) from Member", Integer.class) ;
+        return count ;
+    }
 }
 
 

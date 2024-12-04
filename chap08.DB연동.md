@@ -20,7 +20,7 @@
 
 3.1 Tomcat JDBC의 주요 프로퍼티 
  ```
- setInitialSize(int) : 커넥션 풀을 초기화할 때 생성할 초기 커넨션 개수 지정(default: 10)
+setInitialSize(int) : 커넥션 풀을 초기화할 때 생성할 초기 커넨션 개수 지정(default: 10)
 setMaxActive(int) : 커넥션 풀에서 가져올 수 있는 최대 커넥션 개수 지정(default: 100)
 setMaxIdle(int)  : 커넥션 풀에 유지할 수 있는 최대 커넥션 개수 지정(default: 100)
 setMinIdle(int) : 커넥션 풀에 유지할 최소 커넥션 개수 지정(default: initialSize값)
@@ -33,11 +33,25 @@ setTestOnReturn(boolean) :  풀에 커넥션을 반환할 때 검사 여부를 �
 setTestWhileIdle(boolean) : 커넥션이 풀에 유휴 상태로 있는 동안에 검사할지 여부를 지정(default: false)
 setMinEvictableIdleTimeMillis(int) : 커넥션 풀에 유휴 상태로 유지할 최소 시간을 밀리초 단위로 지정.testWhileIdle 설정이 true라면, 이 시간을 초과한 커넥션을 풀에서 제거(default: 60000밀리초(60초))
 setTimeBetweenEvictionRunsMillis(int) : 커넥션 풀의 유휴 커넥션을 검사할 주기를 밀리초 단위로 지정1초 이하로 설정하면 안됨(default: 5000밀리초(5초))
-```
 
+```
 4.JdbcTemplate를 이용한 쿼리 실행 
 4.1 jdbcTemplate 생성하기 
 4.2 jdbcTemplate를 이용한 조회 쿼리 실행
 List<T> query(String sql, RowMapper<T> rowMapper)
 List<T> query(String sql, Object[] args, RowMapper<T> rowMapper)
 List<T> query(String sql, RowMapper<T> rowMapper, Object... args)
+
+에러 :
+public int count() {
+Integer count = jdbcTemplate.queryForObject("select count(*) from Member", Integer.class) ;
+return count ;
+}
+정의되지 않은 메서드 호출로 인한 컴파일 에러 
+리턴값을 count 변수로 제대로 줬어야 하는데 count()로 오타를 내버림.
+
+
+
+
+
+

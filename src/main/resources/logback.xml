@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Logback 설정 파일 -->
+<configuration>
+
+    <!-- 콘솔(Appender) 출력 설정 -->
+    <!-- 로그를 표준 출력(Console)으로 내보내는 Appender를 정의 -->
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- 로그 출력 형식 설정 -->
+            <!-- %highlight: 로그 레벨에 따라 색상 지정 -->
+            <!-- %d: 날짜/시간, %highlight(%-5level): 색상 지정된 로그 레벨, %cyan(%logger{36}): 로거 이름 청록색, %msg: 로그 메시지, %n: 줄바꿈 -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %highlight(%-5level) %cyan(%logger{36}) - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 기본 로그 레벨 설정 -->
+    <!-- root 요소는 모든 로그에 대한 기본 레벨을 설정 -->
+    <root level="INFO">
+        <!-- stdout Appender를 root 로그에 추가 -->
+        <appender-ref ref="stdout" />
+    </root>
+
+    <!-- 특정 로거에 대해 로그 레벨 설정 -->
+    <!-- Spring JDBC 관련 로그를 DEBUG 레벨로 출력 -->
+    <logger name="org.springframework.jdbc" level="DEBUG" />
+</configuration>

@@ -93,3 +93,26 @@ DB연동시 봤던 에러 메시지와 수습한 기록들..
 빌드 성공, 209 page까지 진행했음.
 스프링의 익셉션 변환 처리 부분부터 시작하면 됨.
 
+7. 트랜잭션 처리
+ - setAutoCommit(false) , commit() , rollback()을 사용해서 트랜잭션을 반영하는 방법 
+ - @Transactional 애노테이션을 사용 하는 방법 (AppCtx 에서 플랫폼 트랜잭션 매니저에 빈 설정, @Transactional  애노테이션 활성화 성정 필요 )
+```
+public class ChangePasswordService {
+    private MemberDao memberDao;
+
+    @Transactional 
+    public void changePassword(String email, String oldPwd, String newPwd) {
+        Member member = memberDao.selectByEmail(email); // 쿼리가 트랜잭션에 묶인다.
+        if (member == null)
+            throw new MemberNotFoundException();
+        member.changePassword(oldPwd, newPwd); // 쿼리가 트랜잭션에 묶인다.
+        memberDao.update(member);
+    }
+```
+
+트랜잭션 처리를 실습하기 위한 코드 입력 완료 , 빌드 완료, 틀린 비번 넣어서 에러 처리 되는지 체크 완료 
+Logback 모츌 추가 , logback도 추가 했음. 
+
+log 제대로 찍히는데.. 터미널에서 로그색상 알록달록하게 만들고 싶어서 
+이리저리 설정 바꿔보다가 오늘은 여기서 끝 ~ 
+

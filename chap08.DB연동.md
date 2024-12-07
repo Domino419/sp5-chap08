@@ -116,3 +116,11 @@ Logback 모츌 추가 , logback도 추가 했음.
 log 제대로 찍히는데.. 터미널에서 로그색상 알록달록하게 만들고 싶어서 
 이리저리 설정 바꿔보다가 오늘은 여기서 끝 ~ 
 
+8. 전체 기능 연동한 코드 실행
+예제 코드 받아서 쓰기 - AppCtx // Main 두개
+
+9.DB연동 실습 종료 
+Main - 에제소스에서 sample 데이터 입력시 편하게 쓰려고 만든 메소드 processSampleCommand 추가.
+
+git push 하고 chap08은 종료! 
+

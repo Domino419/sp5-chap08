@@ -29,6 +29,24 @@ public class MemberInfoPrinter {
     }
 
     /**
+     * method        : printMemberInfoPrinter
+     * date          : 24-11-17
+     * param         : String email - 조회할 회원의 이메일
+     * return        : void
+     * description   : 주어진 이메일로 회원 정보를 검색하여, 존재하면 출력하고 없으면 메시지를 출력한다.
+     */
+    public void printMemberInfo(String email) {
+        Member member = memberDao.selectByEmail(email);
+        if (member == null) {
+            System.out.println("데이터 없음\n");
+            return;
+        }
+        printer.print(member);
+        System.out.println();
+    }
+
+
+    /**
      * method        : setMemberDao
      * date          : 24-11-17
      * param         : MemberDao memberDao - 의존성 주입을 위한 MemberDao 객체

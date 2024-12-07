@@ -7,8 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import spring.ChangePasswordService;
-import spring.MemberDao;
+import spring.*;
 
 
 /**
@@ -67,6 +66,19 @@ public class AppCtx {
     }
 
     /**
+     * method        : memberRegSvc
+     * date          : 24-12-07
+     * return        : MemberRegisterService
+     * description   : MemberRegisterService 객체를 빈으로 등록.
+     *                 회원 등록 로직 수행을 위해 MemberDao를 의존성으로 설정.
+     */
+    @Bean
+    public MemberRegisterService memberRegSvc() {
+        return new MemberRegisterService(memberDao());
+    }
+
+
+    /**
      * method        : changePwdSvc
      * date          : 24-12-04
      * return        : ChangePasswordService - 비밀번호 변경 서비스 객체
@@ -79,6 +91,49 @@ public class AppCtx {
         pwdSvc.setMemberDao(memberDao());
         return pwdSvc ;
     }
+
+    /**
+     * method        : memberPrinter
+     * date          : 24-12-07
+     * return        : MemberPrinter
+     * description   : MemberPrinter 객체를 빈으로 등록.
+     *                 회원 정보를 출력하는 역할을 수행.
+     */
+    @Bean
+    public MemberPrinter memberPrinter() {
+        return new MemberPrinter();
+    }
+
+    /**
+     * method        : listPrinter
+     * date          : 24-12-07
+     * return        : MemberListPrinter
+     * description   : MemberListPrinter 객체를 빈으로 등록.
+     *                 MemberDao와 MemberPrinter를 의존성으로 설정하여 회원 목록 출력 기능 제공.
+     */
+    @Bean
+    public MemberListPrinter listPrinter() {
+        return new MemberListPrinter(memberDao(), memberPrinter());
+    }
+
+
+    /**
+     * method        : infoPrinter
+     * date          : 24-12-07
+     * return        : MemberInfoPrinter
+     * description   : MemberInfoPrinter 객체를 빈으로 등록.
+     *                 특정 회원 정보를 상세히 출력하는 기능 제공.
+     *                 MemberDao와 MemberPrinter를 의존성으로 설정.
+     */
+    @Bean
+    public MemberInfoPrinter infoPrinter() {
+        MemberInfoPrinter infoPrinter = new MemberInfoPrinter();
+        infoPrinter.setMemberDao(memberDao());
+        infoPrinter.setPrinter(memberPrinter());
+        return infoPrinter;
+    }
+
+
 
 }
 
